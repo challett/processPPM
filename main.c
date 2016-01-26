@@ -11,6 +11,8 @@ int main(int argc, char** argv)
 {
   int width, height, max;
   RGB *image;
+  RGB *imagePortion;
+
   int my_rank, p;
   int i, dest, source;
   int offset = 0;
@@ -38,7 +40,7 @@ int main(int argc, char** argv)
 
   MPI_Bcast(rows, p, MPI_INT, 0, MPI_COMM_WORLD);
   MPI_Bcast(&width, 1, MPI_INT, 0, MPI_COMM_WORLD);
-  printf("width is %d \n", width);
+  printf("size of rgb is %d  size of double is %d\n", sizeof(RGB), sizeof(double));
   fflush(stdout);
   if (my_rank == 0){
     for (dest = 1; dest < p; dest++){
@@ -50,13 +52,13 @@ int main(int argc, char** argv)
       if (dest < p - 1) {
         printf("sending %d rows to %d \n", rows[dest], dest);
         fflush(stdout);
-        MPI_Send(image + offset * width - (N/2) * width , rows[dest] * width + (N-1) * width, MPI_DOUBLE, dest, tag, MPI_COMM_WORLD);
+        MPI_Send(image + offset * width - (N/2) * width , sizeof(RGB) * (rows[dest] * width + (N-1) * width), MPI_CHAR, dest, tag, MPI_COMM_WORLD);
         printf("sent %d rows to %d \n", rows[dest], dest);
         fflush(stdout);
       } else {
         printf("sending %d rows to %d (else branch)\n", rows[dest], dest);
         fflush(stdout);
-       MPI_Send(image + offset * width - (N/2) * width , rows[dest] * width + (N/2) * width, MPI_DOUBLE, dest, tag, MPI_COMM_WORLD);
+       MPI_Send(image + offset * width - (N/2) * width , sizeof(RGB) * (rows[dest] * width + (N/2) * width), MPI_CHAR, dest, tag, MPI_COMM_WORLD);
        printf("sent %d rows to %d  (else branch) \n", rows[dest], dest);
        fflush(stdout);
       }
@@ -69,20 +71,20 @@ int main(int argc, char** argv)
 
   } else {
     //receive part to work on
-    image = (RGB*)malloc(sizeof(RGB) * (rows[my_rank] * width + (N-1) * width) +50);
+    imagePortion = (RGB*)malloc(sizeof(double) * (rows[my_rank] * width + (N-1) * width));
     assert(image);
     if (my_rank < p - 1) { //last process doesn't get the bottom rows
       printf("asking for %d rows for %d \n", rows[my_rank], my_rank);
       fflush(stdout);
 
-      MPI_Recv(image, rows[my_rank] * width + (N-1) * width, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(imagePortion, sizeof(RGB) * (rows[my_rank] * width + (N-1) * width), MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status);
       printf("received %d rows for %d \n", rows[my_rank], my_rank);
       fflush(stdout);
     } else {
       printf("asking for %d rows for %d (else branch)\n", rows[my_rank], my_rank);
       fflush(stdout);
 
-      MPI_Recv(image, rows[my_rank] * width + (N/2) * width, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(imagePortion, sizeof(RGB) * (rows[my_rank] * width + (N/2) * width), MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status);
       printf("received %d rows for %d \n", rows[my_rank], my_rank);
       fflush(stdout);
     }
@@ -97,13 +99,13 @@ int main(int argc, char** argv)
     offset = 0;
     for (dest = 1; dest < p; dest++){
       offset += rows[dest-1] ;
-     MPI_Recv(image + offset * width, rows[dest] * width, MPI_DOUBLE, dest, tag, MPI_COMM_WORLD, &status);
+     MPI_Recv(image + offset * width, sizeof(RGB) * (rows[dest] * width), MPI_CHAR, dest, tag, MPI_COMM_WORLD, &status);
     }
 
     //write final file
     writePPM(argv[2], width, height, max, image);
   } else {
-   MPI_Send(image + (N/2) * width, rows[my_rank] * width, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD);
+   MPI_Send(imagePortion + (N/2) * width, sizeof(RGB) * (rows[my_rank] * width), MPI_BYTE, 0, tag, MPI_COMM_WORLD);
   }
 
   free(image);
