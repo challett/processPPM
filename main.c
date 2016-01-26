@@ -55,11 +55,11 @@ int main(int argc, char** argv)
   } else {
     //receive part to work on
     if (my_rank < p - 1) { //last process doesn't get the bottom rows
-      image = (RGB*)malloc(sizeof(RGB) * rows[my_rank] * width + (N-1) * width);
-     MPI_Recv(image, rows[my_rank] * width + (N-1) * width, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
+        image = (RGB*)malloc(sizeof(RGB) * rows[my_rank] * width + (N-1) * width);
+        MPI_Recv(image, rows[my_rank] * width + (N-1) * width, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
     } else {
-      image = (RGB*)malloc(sizeof(RGB) * rows[my_rank] * width + (N/2) * width);
-     MPI_Recv(image, rows[my_rank] * width + (N/2) * width, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
+        image = (RGB*)malloc(sizeof(RGB) * rows[my_rank] * width + (N/2) * width);
+        MPI_Recv(image, rows[my_rank] * width + (N/2) * width, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
     }
 
     processImage(width, rows[my_rank], image, N, 0);
