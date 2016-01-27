@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <assert.h>
 
@@ -66,7 +67,8 @@ int main(int argc, char** argv)
     }
     printf("senteverything by %d \n", my_rank);
     fflush(stdout);
-    processImage(width, rows[0], image, N, 0);
+    imagePortion = (RGB*)malloc(sizeof(RGB) * (rows[my_rank] * width + (N-1) * width));
+    imagePortion = processImage(width, rows[0], image, N, 0);
       printf("%d done processing \n", my_rank);
       fflush(stdout);
 
@@ -91,7 +93,7 @@ int main(int argc, char** argv)
       fflush(stdout);
     }
 
-    processImage(width, rows[my_rank], imagePortion, N, (N/2) * width);
+    imagePortion = processImage(width, rows[my_rank], imagePortion, N, (N/2) * width);
     printf("%d done processing \n", my_rank);
     fflush(stdout);
   }
@@ -99,6 +101,7 @@ int main(int argc, char** argv)
   if (my_rank == 0) {
     //receive filtered parts
     offset = 0;
+      memcpy(image, imagePortion, sizeof(RGB) * (rows[my_rank] * width));
     for (source = 1; source < p; source++){
       offset += rows[source-1] ;
         printf("offset for %d is %d \n", source, offset);
@@ -114,7 +117,7 @@ int main(int argc, char** argv)
   } else {
       printf("sending portion from %d \n", my_rank);
       fflush(stdout);
-      MPI_Send(imagePortion + (N/2) * width, sizeof(RGB) * (rows[my_rank] * width), MPI_CHAR, 0, tag, MPI_COMM_WORLD);
+      MPI_Send(imagePortion, sizeof(RGB) * (rows[my_rank] * width), MPI_CHAR, 0, tag, MPI_COMM_WORLD);
       free(imagePortion);
   }
 
