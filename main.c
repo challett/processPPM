@@ -118,10 +118,10 @@ int main(int argc, char** argv)
       printf("sending portion from %d \n", my_rank);
       fflush(stdout);
       MPI_Send(imagePortion, sizeof(RGB) * (rows[my_rank] * width), MPI_CHAR, 0, tag, MPI_COMM_WORLD);
-      free(imagePortion);
   }
 
-  
+    free(imagePortion);
+
   free(rows);
 
   MPI_Finalize();
