@@ -33,11 +33,7 @@ int main(int argc, char** argv)
     image = readPPM(argv[1], &width, &height, &max);
     for (i=0; i < p; i++)
     {
-      rows[i] = height / p;
-    }
-    for (i=0; i < height % p; i++)
-    {
-        rows[i]++;
+        rows[i] = height / p + (i<height%p ? 1 : 0);
     }
   }
 
@@ -62,7 +58,7 @@ int main(int argc, char** argv)
 
     }
     imagePortion = (RGB*)malloc(sizeof(RGB) * (rows[my_rank] * width + (N-1) * width));
-    imagePortion = processImage(width, rows[0], image, N, 0);
+    imagePortion = processImage(width, rows[0], image, N, 0, argv[4]);
 
 
   } else {
@@ -77,7 +73,7 @@ int main(int argc, char** argv)
       MPI_Recv(imagePortion, sizeof(RGB) * (rows[my_rank] * width + (N/2) * width), MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status);
     }
 
-    imagePortion = processImage(width, rows[my_rank], imagePortion, N, (N/2) * width);
+    imagePortion = processImage(width, rows[my_rank], imagePortion, N, (N/2) * width, argv[4]);
   }
 
   if (my_rank == 0)
