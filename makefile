@@ -8,4 +8,4 @@ $(PROGRAM_NAME): $(OBJS)
 	$(CC) -o $@ $? 
 
 clean:
-	rm  *.o $(PROGRAM_NAME) *~
+	rm  *.o $(PROGRAM_NAME)

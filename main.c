@@ -91,7 +91,7 @@ int main(int argc, char** argv)
       fflush(stdout);
     }
 
-    processImage(width, rows[my_rank], imagePortion, N, 0);
+    processImage(width, rows[my_rank]+2, imagePortion, N, (N/2) * width);
     printf("%d done processing \n", my_rank);
     fflush(stdout);
   }

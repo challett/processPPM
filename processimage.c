@@ -7,7 +7,7 @@ void processImage(int width, int height, RGB *image, int N, int offset)
   // simple image "processing"
   int i;
 
-  for (i=0; i < width*height; i++)
+  for (i=offset; i < width*height; i++)
     {
       RGB *p = image+i;
       p->r = p->g%128;
