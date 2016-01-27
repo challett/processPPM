@@ -1,6 +1,7 @@
 
 #include "a1.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 RGB * processImage(int width, int height, RGB *image, int N, int offset)
 {
@@ -23,7 +24,8 @@ RGB * processImage(int width, int height, RGB *image, int N, int offset)
         int windowSize = 1;
         column = i % width;
         
-        if (offset) {
+        if (offset)
+        {
             for (k=0; k <= N/2; k++)
             {
                 for (j=0; j<= N/2; j++)
@@ -44,7 +46,8 @@ RGB * processImage(int width, int height, RGB *image, int N, int offset)
                 }
             }
             
-        } else {
+        } else
+        {
             for (k=0; k <= N/2; k++)
             {
                 if (k <= i/width)
@@ -73,7 +76,8 @@ RGB * processImage(int width, int height, RGB *image, int N, int offset)
         averageBlue = 0;
         averageGreen = 0;
         averageRed = 0;
-        for(k=0;k<windowSize;k++){
+        for(k=0;k<windowSize;k++)
+        {
             averageBlue += window[k].b;
             averageRed += window[k].r;
             averageGreen += window[k].g;
