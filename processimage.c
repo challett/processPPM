@@ -31,12 +31,12 @@ RGB * processImage(int width, int height, RGB *image, int N, int offset, char *t
             {
                 for (j=0; j<= N/2; j++)
                 {
-                    if ((i+offset-j) / width == (i+offset-j+1) / width)
+                    if ((i+offset) / width == (i+offset-j) / width)
                     {//if the pixel is on the same row as the pixel after it when going left
                         window[windowSize] = *(image+i+offset-j + k*width);
                         windowSize++;
                     }
-                    if ((i+offset+j) / width == (i+offset+j-1) / width)
+                    if ((i+offset) / width == (i+offset+j) / width)
                     {//if the pixel is on the same row as the pixel before it when going right
                         window[windowSize] = *(image+i+offset+j - k*width);
                         windowSize++;
@@ -53,12 +53,12 @@ RGB * processImage(int width, int height, RGB *image, int N, int offset, char *t
                 {//if we have the row
                     for (j=0; j<= N/2; j++)
                     {
-                        if (i>j && ((i+offset-j) / width == (i+offset-j+1) / width))
+                        if (i>j && ((i+offset) / width == (i+offset-j) / width))
                         {//if the pixel is on the same row as the pixel after it when going left
                             window[windowSize] = *(image+i+offset-j + k*width);
                             windowSize++;
                         }
-                        if ((i+offset+j) / width == (i+offset+j-1) / width)
+                        if ((i+offset) / width == (i+offset+j) / width)
                         {//if the pixel is on the same row as the pixel before it when going right
                             window[windowSize] = *(image+i+offset+j - k*width);
                             windowSize++;
@@ -94,8 +94,8 @@ RGB * processImage(int width, int height, RGB *image, int N, int offset, char *t
             for(k=0;k<windowSize;k++)
             {
                 redArray[k] = (int)(window[k].r);
-                greenArray[k] = window[k].g;
-                blueArray[k] = window[k].b;
+                greenArray[k] = (int)window[k].g;
+                blueArray[k] = (int)window[k].b;
             }
 
             qsort(&redArray, windowSize, sizeof(int), cmpfunc);
