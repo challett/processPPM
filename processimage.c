@@ -53,7 +53,7 @@ RGB * processImage(int width, int height, RGB *image, int N, int offset, char *t
                 {//if we have the row
                     for (j=0; j<= N/2; j++)
                     {
-                        if ((i+offset-j) / width == (i+offset-j+1) / width)
+                        if (i>j && ((i+offset-j) / width == (i+offset-j+1) / width))
                         {//if the pixel is on the same row as the pixel after it when going left
                             window[windowSize] = *(image+i+offset-j + k*width);
                             windowSize++;
