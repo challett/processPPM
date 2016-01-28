@@ -64,7 +64,7 @@ int main(int argc, char** argv)
   } else {
     //receive part to work on
     imagePortion = (RGB*)malloc(sizeof(RGB) * (rows[my_rank] * width + (N-1) * width));
-    assert(image);
+    assert(imagePortion);
     if (my_rank < p - 1)
     { //last process doesn't get the bottom rows
       MPI_Recv(imagePortion, sizeof(RGB) * (rows[my_rank] * width + (N-1) * width), MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status);
